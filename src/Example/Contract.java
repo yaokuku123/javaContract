@@ -16,12 +16,10 @@ public class Contract implements Serializable{
 		//给参数赋值
 	    name = params[0];
 	    data = params[1];
-		//System.out.println("执行init函数");
-		//System.out.println("name="+name+"    data="+data);
+		System.out.println("执行init函数");
+		System.out.println("name="+name+"    data="+data);
 	}
-	public String contract() {
-		return "Contract";
-	}
+    
 	
 	@Override
 	public String toString() {
@@ -29,23 +27,25 @@ public class Contract implements Serializable{
 	}
    
     //之后执行时直接用上次之序列化返回的值进行反序列化，执行完后在此序列化
-    public void again(String[] params){
-	   //System.out.println("执行again函数");
-	   //System.out.print("参数为：");
-//	   for(String param:params){
-//		   System.out.print(param+"  ");
-//	   }
-//	   System.out.println("thestringofthefunction"+this.toString());
-//	   System.out.println("");
-	   
+	public void funtwo(double a,String b){
+	   System.out.println("执行funtwo函数");
+	   System.out.print("参数为：");
+	   System.out.println(a);
+       System.out.println(b);
 	}
-   
-    public void funthree(String[] params){
-//	   System.out.println("执行fun3函数");
-//	   System.out.print("参数为：");
-//	   for(String param:params){
-//		   System.out.print(param+"  ");
-//	   }
-//	   System.out.println("");
+     
+    public void funthree(float a, double b,boolean c){
+ 	   System.out.println("执行funthree函数");
+ 	   System.out.print("参数为：");
+       System.out.println(a);
+       System.out.println(b);
+       System.out.println(c);
+ 	}
+       
+    public void funfour(int a,double b){
+	   System.out.println("执行funfour函数");
+	   System.out.println("参数为");
+	   System.out.println(a);
+       System.out.println(b);
 	}
 }

@@ -1,5 +1,4 @@
 package Example;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.*;
 import java.util.Scanner;
 
-//import CeShi.readFile;
+import CeShi.readFile;
 
 public class Util {
 	
@@ -16,21 +15,19 @@ public class Util {
         
 		 Class c = object.getClass();
 		 //根据输入判断执行哪个函数
-		 String[] params = new String[args.length-2];
-		 for(int i=2;i<args.length;i++){
-			 params[i-2] = args[i];
+		 String[] params = new String[args.length-1];
+		 Object[] param = new Object[args.length-1];
+		 for(int i=1;i<args.length;i++){
+			 params[i-1] = args[i];
 		 }
 		 Method[] methods = c.getDeclaredMethods();
 		if("_init".equals(args[0])){
 			try {
 				Contract contract = new Contract(params);
-				System.out.println(contract);
-				System.out.println("\r\r\r\r\r");//分隔符
-			//	write(contract);
-				System.out.println(args[0]+" function");
-				System.out.println("When the code was init excuted, the state of code");
-				System.out.println(contract);
-			//	readFile.outPut();
+				System.out.println("初始化");
+				write(contract);
+				System.out.println("第一次执行时，写入磁盘的数据");
+				readFile.outPut();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,17 +38,33 @@ public class Util {
 				if(args[0].equals(method.getName()))
 				{
 					 try {
-					//	object = read();
-					//	System.out.println(object);
-					    Contract object1 = new Contract(params);
-						method.invoke(object1,(Object)params);
-						System.out.println(object1);
-						 System.out.println("\r\r\r\r\r");
-						//write(object);
-						 System.out.println(args[0]+" function");
-						System.out.println("When the code was excuted, the state of code");
-						 System.out.println(object1);
-						//readFile.outPut();
+						object = read();
+						System.out.println(object);
+						Type type[] = method.getGenericParameterTypes();
+						for(int i=0;i<type.length;i++){
+							//System.out.println(type[i]);
+							if(type[i].toString().equals("int")){
+								param[i] = Integer.parseInt(params[i]);
+								System.out.println(param[i]+"  "+param[i].getClass().getName());
+							}
+							else if(type[i].toString().equals("double")){
+								param[i] = Double.parseDouble(params[i]);
+								System.out.println(param[i]+"  "+param[i].getClass().getName());
+							}
+							else if(type[i].toString().equals("float")){
+								param[i] = Float.parseFloat(params[i]);
+								System.out.println(param[i]+"  "+param[i].getClass().getName());
+							}
+							else if(type[i].toString().equals("boolean")){
+								param[i] = Boolean.parseBoolean(params[i]);
+								System.out.println(param[i]+"  "+param[i].getClass().getName());
+							}
+							else {param[i] = params[i];}
+						}			
+						method.invoke(object,param);
+						write(object);
+						System.out.println("不是初始执行时，写入磁盘的数据");
+						readFile.outPut();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

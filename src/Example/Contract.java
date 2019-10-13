@@ -41,7 +41,6 @@ public class Contract implements Serializable{
        System.out.println(b);
        System.out.println(c);
  	}
-       
     public void funfour(int a,double b){
 	   System.out.println("执行funfour函数");
 	   System.out.println("参数为");

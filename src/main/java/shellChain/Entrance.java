@@ -1,5 +1,6 @@
 package shellChain;
 
+import contractLib.Party;
 import custom.Contract;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -23,10 +24,12 @@ public class Entrance {
         contractData = systemInput.getString("contractData");
         funName = systemInput.getString("funName");
         ShellChain.setFromAddress(systemInput.getString("fromAddress"));
-        JSONArray userParams = jsonObject.getJSONArray("userParams");
+        ShellChain.setParty(new Party());
+       // JSONArray userParams = jsonObject.getJSONArray("userParams");
+        JSONObject contractParams = jsonObject.getJSONObject("contractParams");
 
         try {
-            JSONObject result = HandleContractEntrance.execute(Contract.class,contractData,funName,userParams);
+            JSONObject result = HandleContractEntrance.execute(Contract.class,contractData,funName,contractParams);
             ReadWriteTxt.writeTxt(outPath,result.toString());
         } catch (Exception e) {
             // TODO Auto-generated catch block

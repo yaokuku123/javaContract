@@ -1,76 +1,102 @@
 package shellChain;
 
+import contractLib.PartiesSigns;
+import contractLib.Party;
 import custom.Contract;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 
 public class HandleContractEntrance {
 
     private static Object[] params;
 
-    public static JSONObject execute(Class c, String contractData, String funName, JSONArray userParams) throws Exception{
+    public static JSONObject execute(Class c, String contractData, String funName, JSONObject contractParams) throws Exception {
 
+        JSONArray userParams = contractParams.getJSONArray("userParams");
         Object userResult = "";
         String contractDataResult = "";
+        String partyForm = "";
         boolean executed = false;
         Contract contract = null;
-        if("_init".equals(funName)){
+        if ("_init".equals(funName)) {
             Constructor cons[];
             cons = c.getDeclaredConstructors();
             for (Constructor constructor : cons) {
                 Type[] types = constructor.getGenericParameterTypes();
-                if(transformParams(types,userParams)) {
-                    contract = (Contract)constructor.newInstance(params);
+                if (transformParams(types, userParams)) {
+                    contract = (Contract) constructor.newInstance(params);
                     executed = true;
                     break;
                 }
             }
-        }
-        else {
-            contract = (Contract)readObject(contractData);
-            if(contract == null) {
+        } else if ("_sign".equals(funName)) {
+            String signature = contractParams.getString("signature");
+            Boolean isSuccess = ShellChain.party.toSign(ShellChain.getFromAddress(), signature);
+            if (isSuccess == true) {
+                ArrayList<PartiesSigns> listSign = ShellChain.party.getListSign();
+
+                userResult = "Sign Success!!!";
+            }
+
+
+
+        } else {
+            contract = (Contract) readObject(contractData);
+            if (contract == null) {
                 Constructor constructor = c.getDeclaredConstructor();
-                contract = (Contract)constructor.newInstance();
+                contract = (Contract) constructor.newInstance();
             }
             Method[] methods = c.getDeclaredMethods();
-            for(Method method:methods) {
-                if(method.getName().equals(funName)) {
+            for (Method method : methods) {
+                if (method.getName().equals(funName)) {
                     Type[] types = method.getGenericParameterTypes();
-                    if(transformParams(types,userParams)) {
-                        userResult = method.invoke(contract,params);
+                    if (types.length==0) {
+                        userResult = method.invoke(contract);
                         executed = true;
                         break;
+                    }else{
+                        if (transformParams(types, userParams)) {
+                            userResult = method.invoke(contract, params);
+                            executed = true;
+                            break;
+                        }
                     }
+
                 }
             }
         }
-        if(!executed) {
+        if (!executed) {
             throw new RuntimeException("execute failed");
         }
         contractDataResult = writeObject(contract);
+        partyForm = writeObject(ShellChain.party);
         JSONObject result = new JSONObject();
-        result.put("contractData",contractDataResult);
-        result.put("userResult",userResult);
+        result.put("contractData", contractDataResult);
+        result.put("partyForm", partyForm);
+        result.put("userResult", userResult);
+
         return result;
     }
 
+
     public static boolean transformParams(Type[] types, JSONArray jsonParam) {
-        if(types.length != jsonParam.size())
+        if (types.length != jsonParam.size())
             return false;
         params = new Object[types.length];
-        for(int i = 0; i < types.length; i ++) {
-            if(types[i] == int.class){
+        for (int i = 0; i < types.length; i++) {
+            if (types[i] == int.class) {
                 params[i] = jsonParam.getInt(i);
-            } else if(types[i] == long.class){
+            } else if (types[i] == long.class) {
                 params[i] = jsonParam.getLong(i);
-            } else if(types[i] == Boolean.class || types[i] == boolean.class){
+            } else if (types[i] == Boolean.class || types[i] == boolean.class) {
                 params[i] = jsonParam.getBoolean(i);
-            } else if(types[i] == float.class || types[i] == double.class){
+            } else if (types[i] == float.class || types[i] == double.class) {
                 params[i] = jsonParam.getDouble(i);
-            } else if(types[i] == String.class){
+            } else if (types[i] == String.class) {
                 params[i] = jsonParam.getString(i);
             } else {
                 return false;

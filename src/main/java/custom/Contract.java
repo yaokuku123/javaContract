@@ -19,7 +19,7 @@ public class Contract extends  ShellChainContract {
 //    public String pubkey;
 //    public String signature;
     public static void askSignParties (){
-        ShellChain.party.regist("5r4r", "rete");
+        ShellChain.party.regist("1TkgibF2AsDEkriRWHJAuJsnXuL4u4UsiqAz2U");
     }
 
     public Contract() {

@@ -35,6 +35,8 @@ public class HandleContractEntrance {
             }
         } else if ("_sign".equals(funName)) {
             String signature = contractParams.getString("signature");
+            String partyForms = contractParams.getString("partyForm");
+            Party party = (Party) readObject(partyForms);
             Boolean isSuccess = ShellChain.party.toSign(ShellChain.getFromAddress(), signature);
             if (isSuccess == true) {
                 ArrayList<PartiesSigns> listSign = ShellChain.party.getListSign();

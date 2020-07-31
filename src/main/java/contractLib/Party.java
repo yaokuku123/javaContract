@@ -24,6 +24,7 @@ public class Party implements Serializable {
             ps.setUserAddress(params[i]);
             listSign.add(ps);
         }
+        System.out.println(JSONSerializer.toJSON(listSign).toString());
        return JSONSerializer.toJSON(listSign).toString();
     }
 
@@ -34,7 +35,6 @@ public class Party implements Serializable {
             if (myAddress.equals(signAddress)){
                 listSign.get(i).setSignature(signature);
                 flag = true;
-                break;
             }
         }
         return flag;
@@ -50,7 +50,7 @@ public class Party implements Serializable {
         return true;
     }
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
 //        regist("5r4r","rete");
 //        toSign("5r4r","hfls");
 //        JSON json = JSONSerializer.toJSON(listSign);
@@ -60,7 +60,7 @@ public class Party implements Serializable {
 //        Boolean check1 = check();
 //        System.out.println(check1);
 
-    }
+    }*/
 
 }
 

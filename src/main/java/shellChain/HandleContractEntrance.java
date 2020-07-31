@@ -3,6 +3,7 @@ package shellChain;
 import contractLib.PartiesSigns;
 import contractLib.Party;
 import custom.Contract;
+import jdk.nashorn.tools.Shell;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -15,7 +16,7 @@ public class HandleContractEntrance {
     private static Object[] params;
 
     public static JSONObject execute(Class c, String contractData, String funName, JSONObject contractParams) throws Exception {
-
+        ArrayList<PartiesSigns> listSign1 = null;
         JSONArray userParams = contractParams.getJSONArray("userParams");
         Object userResult = "";
         String contractDataResult = "";
@@ -35,18 +36,25 @@ public class HandleContractEntrance {
             }
         } else if ("_sign".equals(funName)) {
             String signature = contractParams.getString("signature");
-            String partyForms = contractParams.getString("partyForm");
-            Party party = (Party) readObject(partyForms);
+            partyForm = contractParams.getString("partyForm");
+            listSign1 = (ArrayList)readObject(partyForm);
+            ShellChain.party.listSign = listSign1;
             Boolean isSuccess = ShellChain.party.toSign(ShellChain.getFromAddress(), signature);
-            if (isSuccess == true) {
-                ArrayList<PartiesSigns> listSign = ShellChain.party.getListSign();
+            Boolean flag = ShellChain.party.check();
+            if (isSuccess == true && flag == true) {
+                userResult = "all Sign Success!!!";
+                executed = true;
 
-                userResult = "Sign Success!!!";
+            }else if(isSuccess == true){
+                userResult = "Sign Success!!!,but not all";
+                executed = true;
+            }else{
+                executed = false;
             }
 
+        }
 
-
-        } else {
+        else {
             contract = (Contract) readObject(contractData);
             if (contract == null) {
                 Constructor constructor = c.getDeclaredConstructor();
@@ -75,11 +83,16 @@ public class HandleContractEntrance {
             throw new RuntimeException("execute failed");
         }
         contractDataResult = writeObject(contract);
-        partyForm = writeObject(ShellChain.party);
+
+        partyForm = writeObject(ShellChain.party.getListSign());
         JSONObject result = new JSONObject();
         result.put("contractData", contractDataResult);
         result.put("partyForm", partyForm);
         result.put("userResult", userResult);
+
+        readObject(partyForm);
+
+
 
         return result;
     }

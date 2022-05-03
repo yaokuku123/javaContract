@@ -24,7 +24,7 @@ public class Contract extends  ShellChainContract {
     //    public String pubkey;
 //    public String signature;
     public static void askSignParties (){
-        ShellChain.party.regist("1Ac1wAZA3jUH3SydsT5DKgizAwNo6MnBCxq6W2","1axnSBPUDyF2Tuq2NtyszbBTAXeG6krZy9E9oY","1NZvcn3EUodoEFKKcbfvqqmcSu8yjqMnj2rYHD");
+        ShellChain.party.regist();
     }
 
     public Contract() {
@@ -88,5 +88,10 @@ public class Contract extends  ShellChainContract {
             return "access denied with name " + ShellChain.getFromAddress();
     }
 
+
+    //条款
+    public void Bid(){
+
+    }
 
 }

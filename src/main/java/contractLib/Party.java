@@ -16,6 +16,9 @@ public class Party implements Serializable {
         return listSign;
     }
 
+    public  void setListSign(ArrayList<PartiesSigns> list){
+        listSign = list;
+    }
     public  String regist (String...params){
         int length = params.length;
 
@@ -28,14 +31,47 @@ public class Party implements Serializable {
        return JSONSerializer.toJSON(listSign).toString();
     }
 
-    public  Boolean toSign (String myAddress,String signature ){
+    public  Boolean toSign (String myAddress,String signature,String signdate ){
         Boolean flag = false;
         for (int i = 0; i < listSign.size(); i++) {
             String signAddress = listSign.get(i).getUserAddress();
             if (myAddress.equals(signAddress)){
                 listSign.get(i).setSignature(signature);
+                listSign.get(i).setSignDate(signdate);
                 flag = true;
             }
+        }
+        return flag;
+    }
+    public  Boolean toPublish (String myAddress,String date ){
+        PartiesSigns ps = new PartiesSigns();
+        ps.setUserAddress(myAddress);
+        ps.setSignDate(date);
+        listSign.add(ps);
+        return true;
+    }
+
+    public  Boolean toVerify (String myAddress,String signature){
+        listSign.get(0).setSignature(signature);
+        return true;
+    }
+
+
+    public  Boolean toGuo (String myAddress){
+        Boolean flag = false;
+        int count = 0;
+        for (int i = 0; i < listSign.size(); i++) {
+            String signAddress = listSign.get(i).getUserAddress();
+            if (myAddress.equals(signAddress)){
+                break;
+            }
+            count ++;
+        }
+        if(count == listSign.size()){
+            PartiesSigns p =new PartiesSigns();
+            p.setUserAddress(myAddress);
+            listSign.add(p);
+            flag = true;
         }
         return flag;
     }
